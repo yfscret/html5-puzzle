@@ -45,9 +45,11 @@
             第&nbsp;<strong id="level">?</strong>&nbsp;/&nbsp;<span id="levels">?</span> 关，
             本关限时<span id="time">?</span>秒
         </p>
+        步数：<p id='step'>0</p>
     </div>
     <canvas id="canvas" style="display: none" width="300" height="300"></canvas>
     <script type="text/javascript" src="zepto.js"></script>
+    <script type="text/javascript" src="touch.js"></script>
     <script type="text/javascript">
         var doc = document;
         var canvas = doc.getElementById('canvas');
@@ -55,6 +57,7 @@
         var $gameBox = $('#gameBox');
         var $lis = $gameBox.find('li');
         var image = new Image();
+        var $step = 1
         var oriArr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         var imgArr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         var App = {
@@ -62,7 +65,7 @@
             isComplete: false,
             level: 0,
             levels: [
-                {time: "60.00", image: "shulan.jpg"},
+                {time: "50.00", image: "shulan.jpg"},
                 {time: "40.00", image: "tuzi.jpg"},
                 {time: "30.00", image: "together.jpg"}
             ],
@@ -134,9 +137,11 @@
                     $('#layer').hide();
                 });
                 $('#reset').on('tap', function() {
+                  if ($(this).attr('disabled') != 'disabled'){
                     App.resetData();
                     App.countdown();
                     App.randomImage(true);
+                  }
                 });
             },
             countdown: function() {
@@ -160,6 +165,8 @@
                 $('#time').text(time);
                 $('#level').text(this.level+1);
                 $('#levels').text(this.levels.length);
+                $('#step').text(0);
+                $step = 1;
             },
             init: function() {
                 $('#reset').prop('disabled', true);
@@ -184,12 +191,13 @@
                 for (var i=0; i<3; i++) {
                     for (var j=0; j<3; j++) {
                         ctx.drawImage(image, 300*j, 300*i, 300, 300, 0, 0, 300, 300);
-                        $lis.eq(imgArr[index-1]-1).find('img').data('seq', index).attr('src', canvas.toDataURL('image/jpeg'));
+                        $lis.eq(imgArr[index-1]-1).find('img').attr('data-seq', index).attr('src', canvas.toDataURL('image/jpeg'));
                         index++;
                     }
                 }
             },
             check: function() {
+               $('#step').text($step++)
                 var resArr = [];
                 $('#gameBox img').each(function(k, v) {
                     resArr.push(v.getAttribute("data-seq"));
